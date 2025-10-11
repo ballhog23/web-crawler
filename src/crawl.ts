@@ -55,40 +55,59 @@ export function getFirstParagraphFromHTML(html: string): string {
 }
 
 export function getURLsFromHTML(html: string, baseURL: string): string[] {
+    const urls: string[] = [];
+
     try {
         const dom = new JSDOM(html);
         const doc = dom.window.document;
         const anchors = doc.querySelectorAll('a');
-        if (anchors.length === 0) return [];
-        const hrefs: string[] = [];
-        anchors.forEach(a => hrefs.push(a.getAttribute('href') || ''));
-        const filterEmpty = hrefs.filter(link => link !== '');
 
-        return filterEmpty.map(link => link === '/' ? baseURL : link);
+        if (anchors.length === 0) return urls;
 
-    } catch {
-        return [];
+        anchors.forEach(a => {
+            const href = a.getAttribute('href');
+            if (!href) return;
+
+            try {
+                const url = new URL(href, baseURL).toString();
+                urls.push(url);
+            } catch (err) {
+                console.error(`invalid href '${href}':`, err);
+            }
+        });
+
+        return urls;
+
+    } catch (err) {
+        console.error("failed to parse HTML:", err);
     }
+    return urls;
 }
 
 export function getImagesFromHTML(html: string, baseURL: string): string[] {
+    const srcs: string[] = [];
+
     try {
         const dom = new JSDOM(html);
         const doc = dom.window.document;
         const images = doc.querySelectorAll('img');
         if (images.length === 0) return [];
-        const srcs: string[] = [];
-        images.forEach(img => srcs.push(img.getAttribute('src') || ''));
-        const filterEmpty = srcs.filter(src => src !== '');
-        return filterEmpty.map(src => {
-            if (src[0] === '/') {
-                return `${baseURL}${src}`;
-            } else {
-                return src;
+
+        images.forEach(img => {
+            const src = img.getAttribute('src');
+            if (!src) return;
+
+            try {
+                const url = new URL(src, baseURL).toString();
+                srcs.push(url);
+            } catch (err) {
+                console.error(`invalid src '${src}':`, err);
             }
         })
 
-    } catch {
-        return [];
+    } catch (err) {
+        console.error("failed to parse HTML:", err);
     }
+
+    return srcs;
 }

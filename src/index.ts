@@ -1,17 +1,21 @@
-import { normalizeURL, getDOMFromURL, getFirstParagraphFromHTML, getH1FromHTML, getURLsFromHTML } from "./crawl.js";
+import {
+    normalizeURL,
+    getDOMFromURL,
+    getFirstParagraphFromHTML,
+    getH1FromHTML,
+    getURLsFromHTML,
+    getImagesFromHTML
+} from "./crawl.js";
 
 async function main() {
-    const inputBody = `
-    <html>
-        <body>
-            <a href="https://blog.boot.dev">Go to Boot.dev</a>
-            <a href="">Go to Boot.dev</a>
-            <a href="/">Go to Boot.dev</a>
-            <img src="/logo.png" alt="Boot.dev Logo" />
-        </body>
-    </html>`;
+    const inputURL = "https://blog.boot.dev";
+    const inputBody =
+        `<html><body>` +
+        `<img src="/logo.png" alt="Logo">` +
+        `<img src="https://cdn.boot.dev/banner.jpg">` +
+        `</body></html>`;
 
-    console.log(getURLsFromHTML(inputBody, 'https://blog.boot.dev'))
+    console.log(getImagesFromHTML(inputBody, inputURL))
 }
 
 main();
