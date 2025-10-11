@@ -30,24 +30,26 @@ export async function getDOMFromURL(url: string) {
     return dom?.serialize() || '';
 }
 
-export function getH1FromHTML(html: string) {
-    if (html.length === 0) {
-        throw new Error('HTML string is empty');
+export function getH1FromHTML(html: string): string {
+    try {
+        const dom = new JSDOM(html);
+        const doc = dom.window.document;
+        const h1 = doc.querySelector("h1");
+        return (h1?.textContent ?? "").trim();
+    } catch {
+        return "";
     }
-
-    const dom = new JSDOM(html);
-    const h1 = dom.window.document.querySelector('h1')?.textContent.toLowerCase() || '';
-    console.log('h1: ', h1)
-    return h1;
 }
 
-export function getFirstParagraphFromHTML(html: string) {
-    if (html.length === 0) {
-        throw new Error('HTML string is empty');
-    }
+export function getFirstParagraphFromHTML(html: string): string {
+    try {
+        const dom = new JSDOM(html);
+        const doc = dom.window.document;
 
-    const dom = new JSDOM(html);
-    const p = dom.window.document.querySelector('p')?.textContent.toLowerCase() || '';
-    console.log('p: ', p)
-    return p;
+        const main = doc.querySelector("main");
+        const p = main?.querySelector("p") ?? doc.querySelector("p");
+        return (p?.textContent ?? "").trim();
+    } catch {
+        return "";
+    }
 }
