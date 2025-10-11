@@ -53,3 +53,42 @@ export function getFirstParagraphFromHTML(html: string): string {
         return "";
     }
 }
+
+export function getURLsFromHTML(html: string, baseURL: string): string[] {
+    try {
+        const dom = new JSDOM(html);
+        const doc = dom.window.document;
+        const anchors = doc.querySelectorAll('a');
+        if (anchors.length === 0) return [];
+        const hrefs: string[] = [];
+        anchors.forEach(a => hrefs.push(a.getAttribute('href') || ''));
+        const filterEmpty = hrefs.filter(link => link !== '');
+
+        return filterEmpty.map(link => link === '/' ? baseURL : link);
+
+    } catch {
+        return [];
+    }
+}
+
+export function getImagesFromHTML(html: string, baseURL: string): string[] {
+    try {
+        const dom = new JSDOM(html);
+        const doc = dom.window.document;
+        const images = doc.querySelectorAll('img');
+        if (images.length === 0) return [];
+        const srcs: string[] = [];
+        images.forEach(img => srcs.push(img.getAttribute('src') || ''));
+        const filterEmpty = srcs.filter(src => src !== '');
+        return filterEmpty.map(src => {
+            if (src[0] === '/') {
+                return `${baseURL}${src}`;
+            } else {
+                return src;
+            }
+        })
+
+    } catch {
+        return [];
+    }
+}
