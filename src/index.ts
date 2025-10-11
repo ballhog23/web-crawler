@@ -1,6 +1,12 @@
-import { normalizeURL } from "./crawl.js";
+import { normalizeURL, getDOMFromURL, getFirstParagraphFromHTML, getH1FromHTML } from "./crawl.js";
 
-normalizeURL('https://blog.boot.dev/path/')
-normalizeURL('https://blog.boot.dev/path')
-normalizeURL('http://blog.boot.dev/path/')
-normalizeURL('http://blog.boot.dev/path')
+async function main() {
+    const normalizedURL = normalizeURL('https://calebpirkle.com/');
+    const url = `https://${normalizedURL}`;
+    const parsed = await getDOMFromURL(url);
+    if (!parsed) throw new Error('unable to parse html');
+    getH1FromHTML(parsed);
+    getFirstParagraphFromHTML(parsed);
+}
+
+main();
