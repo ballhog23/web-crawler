@@ -8,8 +8,7 @@ async function main() {
     }
     const baseURL = args[0];
     console.log(`starting crawl of: ${baseURL}...`);
-    const page = await getHTML(baseURL);
-    console.log(page)
+    await getHTML(baseURL);
     process.exit(0);
 }
 

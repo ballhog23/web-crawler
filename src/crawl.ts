@@ -26,25 +26,25 @@ export async function getHTML(url: string) {
         }
     }
 
+    let res;
     try {
-        const resp = await fetch(url, options);
-
-        if (!resp.ok) {
-            console.error(`Error fetching URL: ${url}`);
-            return;
-        }
-
-        const contentType = resp.headers.get('content-type');
-        if (!contentType?.includes('text/html')) {
-            console.error(`content-type is not text/html`);
-            return;
-        }
-
-        return await resp.text();
+        res = await fetch(url, options);
     } catch (error) {
-        console.error(`${error instanceof Error ? error.message : error}`);
+        throw new Error(`Network Error: ${error instanceof Error ? error.message : error}`);
+    }
+
+    if (res.status > 399) {
+        console.log(`Got HTTP error: ${res.status} ${res.statusText}`);
         return;
     }
+
+    const contentType = res.headers.get('content-type');
+    if (!contentType || !contentType.includes('text/html')) {
+        console.error(`Got non-HTML response: ${contentType}`);
+        return
+    }
+
+    console.log(await res.text());
 }
 
 export function getH1FromHTML(html: string): string {
