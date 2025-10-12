@@ -17,6 +17,36 @@ export function normalizeURL(urlString: string) {
     return fullpath;
 }
 
+export async function getHTML(url: string) {
+    const options: RequestInit = {
+        method: "GET",
+        headers: {
+            "User-Agent": 'BootCrawler/1.0',
+            "content-type": "text/html"
+        }
+    }
+
+    try {
+        const resp = await fetch(url, options);
+
+        if (!resp.ok) {
+            console.error(`Error fetching URL: ${url}`);
+            return;
+        }
+
+        const contentType = resp.headers.get('content-type');
+        if (!contentType?.includes('text/html')) {
+            console.error(`content-type is not text/html`);
+            return;
+        }
+
+        return await resp.text();
+    } catch (error) {
+        console.error(`${error instanceof Error ? error.message : error}`);
+        return;
+    }
+}
+
 export function getH1FromHTML(html: string): string {
     try {
         const dom = new JSDOM(html);

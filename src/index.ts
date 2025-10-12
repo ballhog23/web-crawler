@@ -1,4 +1,4 @@
-import { extractPageData } from "./crawl.js";
+import { extractPageData, getHTML } from "./crawl.js";
 
 async function main() {
     const args = process.argv.slice(2);
@@ -8,9 +8,9 @@ async function main() {
     }
     const baseURL = args[0];
     console.log(`starting crawl of: ${baseURL}...`);
+    const page = await getHTML(baseURL);
+    console.log(page)
     process.exit(0);
 }
-
-main();
 
 main();
