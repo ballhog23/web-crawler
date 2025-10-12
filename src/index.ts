@@ -1,21 +1,14 @@
-import {
-    normalizeURL,
-    getDOMFromURL,
-    getFirstParagraphFromHTML,
-    getH1FromHTML,
-    getURLsFromHTML,
-    getImagesFromHTML
-} from "./crawl.js";
+import { extractPageData } from "./crawl.js";
 
 async function main() {
-    const inputURL = "https://blog.boot.dev";
-    const inputBody =
-        `<html><body>` +
-        `<img src="/logo.png" alt="Logo">` +
-        `<img src="https://cdn.boot.dev/banner.jpg">` +
-        `</body></html>`;
+    const args = process.argv.slice(2);
+    if (args.length < 1 || args.length > 1) {
+        console.error('usage: npm run start <page_url>');
+        process.exit(1);
+    }
 
-    console.log(getImagesFromHTML(inputBody, inputURL))
+    const url = args[0];
+    // extractPageData()
 }
 
 main();

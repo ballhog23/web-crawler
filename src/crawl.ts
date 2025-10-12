@@ -17,19 +17,6 @@ export function normalizeURL(urlString: string) {
     return fullpath;
 }
 
-export async function getDOMFromURL(url: string) {
-    if (url.length === 0) throw new Error('Provide a URL, then try again.');
-
-    let dom = null;
-    try {
-        dom = await JSDOM.fromURL(url);
-    } catch (error) {
-        console.log(`${error instanceof Error ? error.message : error}`);
-    }
-
-    return dom?.serialize() || '';
-}
-
 export function getH1FromHTML(html: string): string {
     try {
         const dom = new JSDOM(html);
@@ -91,7 +78,6 @@ export function getImagesFromHTML(html: string, baseURL: string): string[] {
         const dom = new JSDOM(html);
         const doc = dom.window.document;
         const images = doc.querySelectorAll('img');
-        if (images.length === 0) return [];
 
         images.forEach(img => {
             const src = img.getAttribute('src');
@@ -99,15 +85,33 @@ export function getImagesFromHTML(html: string, baseURL: string): string[] {
 
             try {
                 const url = new URL(src, baseURL).toString();
+                console.log(url)
                 srcs.push(url);
             } catch (err) {
                 console.error(`invalid src '${src}':`, err);
             }
-        })
-
+        });
     } catch (err) {
         console.error("failed to parse HTML:", err);
     }
 
     return srcs;
+}
+
+export function extractPageData(html: string, pageURL: string): ExtractedPageData {
+    return {
+        url: pageURL,
+        h1: getH1FromHTML(html),
+        first_paragraph: getFirstParagraphFromHTML(html),
+        outgoing_links: getURLsFromHTML(html, pageURL),
+        image_urls: getImagesFromHTML(html, pageURL)
+    }
+}
+
+export type ExtractedPageData = {
+    url: string,
+    h1: string,
+    first_paragraph: string,
+    outgoing_links: string[],
+    image_urls: string[],
 }
