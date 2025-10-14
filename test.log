@@ -1,31 +1,29 @@
 
 > web-crawler@1.0.0 start
-> tsx ./src/index.ts https://calebpirkle.com/
+> tsx ./src/index.ts https://firstchoiceautotx.com
 
-starting crawl of: https://calebpirkle.com/...
-crawling page... https://calebpirkle.com/
+starting crawl of: https://firstchoiceautotx.com...
+crawling page... https://firstchoiceautotx.com
 extracted page data successfully...
-crawling page... https://calebpirkle.com/services/
+crawling page... https://firstchoiceautotx.com/index.html
 extracted page data successfully...
-crawling page... https://calebpirkle.com/contact/
+crawling page... https://firstchoiceautotx.com/services/index.html
 extracted page data successfully...
-crawling page... https://calebpirkle.com/frequently-asked-questions.html
-Got HTTP error: 404 Not Found https://calebpirkle.com/frequently-asked-questions.html
+crawling page... https://firstchoiceautotx.com/about-us/index.html
 extracted page data successfully...
-crawling page... https://calebpirkle.com/services/services/
-Got HTTP error: 404 Not Found https://calebpirkle.com/services/services/
+crawling page... https://firstchoiceautotx.com/gallery/index.html
 extracted page data successfully...
-crawling page... https://calebpirkle.com/checkout/
-extracted page data successfully...
-crawling page... https://calebpirkle.com/faq/
-Got HTTP error: 404 Not Found https://calebpirkle.com/faq/
+crawling page... https://firstchoiceautotx.com/sitemap.xml
+Got non-HTML response: application/xml
+html is empty
+crawling page... https://firstchoiceautotx.com/faq.html
 extracted page data successfully...
 Map(7) {
-  'calebpirkle.com' => 18,
-  'calebpirkle.com/services' => 11,
-  'calebpirkle.com/contact' => 13,
-  'calebpirkle.com/frequently-asked-questions.html' => 1,
-  'calebpirkle.com/services/services' => 1,
-  'calebpirkle.com/checkout' => 4,
-  'calebpirkle.com/faq' => 3
+  'firstchoiceautotx.com' => 1,
+  'firstchoiceautotx.com/index.html' => 24,
+  'firstchoiceautotx.com/services/index.html' => 15,
+  'firstchoiceautotx.com/about-us/index.html' => 12,
+  'firstchoiceautotx.com/gallery/index.html' => 6,
+  'firstchoiceautotx.com/sitemap.xml' => 6,
+  'firstchoiceautotx.com/faq.html' => 6
 }

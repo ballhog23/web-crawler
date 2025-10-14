@@ -34,10 +34,16 @@ export async function crawlPage(baseURL: string, currentURL: string, pages: Map<
     console.log(`crawling page... ${currentURL}`);
     pages.set(normalCurURL, value);
 
+    let html;
+    try {
+        html = await getHTML(currentURL);
+    } catch (error) {
+        console.error(`${error instanceof Error ? error.message : `fetching HTML from URL: ${currentURL}`}`);
+        return pages;
+    }
 
-    const html = await getHTML(currentURL);
     if (!html) {
-        console.error(`Error fetching HTML from URL: ${currentURL}`);
+        console.log('html is empty');
         return pages;
     }
 
@@ -47,7 +53,7 @@ export async function crawlPage(baseURL: string, currentURL: string, pages: Map<
     if (links.length === 0) return pages;
 
     for (const link of links) {
-        await crawlPage(baseURL, link, pages)
+        pages = await crawlPage(baseURL, link, pages)
     }
 
     return pages;
@@ -80,7 +86,7 @@ export async function getHTML(url: string) {
         return;
     }
 
-    return await res.text();
+    return await res.text()
 }
 
 export function getH1FromHTML(html: string): string {
