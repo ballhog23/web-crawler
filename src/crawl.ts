@@ -1,5 +1,6 @@
 import { URL } from "node:url";
 import { JSDOM } from 'jsdom';
+import { ConcurrentCrawler } from './lib/concurrent-crawler';
 
 export function normalizeURL(urlString: string) {
     if (urlString.length === 0) {
@@ -17,76 +18,11 @@ export function normalizeURL(urlString: string) {
     return fullpath;
 }
 
-export async function crawlPage(baseURL: string, currentURL: string, pages: Map<string, number> = new Map()) {
-    const currentURLHost = new URL(currentURL).hostname;
-    const baseURLHost = new URL(baseURL).hostname;
+export async function crawlSiteAsync(baseURL: string) {
+    const cc = new ConcurrentCrawler(baseURL, new Map());
+    const data = await cc.crawl(baseURL);
 
-    if (currentURLHost !== baseURLHost) return pages;
-
-    const normalCurURL = normalizeURL(currentURL);
-    const value = pages.get(normalCurURL) ?? 1;
-
-    if (pages.has(normalCurURL)) {
-        pages.set(normalCurURL, (value + 1));
-        return pages;
-    }
-
-    console.log(`crawling page... ${currentURL}`);
-    pages.set(normalCurURL, value);
-
-    let html;
-    try {
-        html = await getHTML(currentURL);
-    } catch (error) {
-        console.error(`${error instanceof Error ? error.message : `fetching HTML from URL: ${currentURL}`}`);
-        return pages;
-    }
-
-    if (!html) {
-        console.log('html is empty');
-        return pages;
-    }
-
-    const pageData = extractPageData(html, currentURL);
-    const links = pageData.outgoing_links;
-
-    if (links.length === 0) return pages;
-
-    for (const link of links) {
-        pages = await crawlPage(baseURL, link, pages)
-    }
-
-    return pages;
-}
-
-export async function getHTML(url: string) {
-    const options: RequestInit = {
-        method: "GET",
-        headers: {
-            "User-Agent": 'BootCrawler/1.0',
-            "content-type": "text/html"
-        }
-    }
-
-    let res;
-    try {
-        res = await fetch(url, options);
-    } catch (error) {
-        throw new Error(`Network Error: ${error instanceof Error ? error.message : error}`);
-    }
-
-    if (res.status > 399) {
-        console.log(`Got HTTP error: ${res.status} ${res.statusText}`, url);
-        return;
-    }
-
-    const contentType = res.headers.get('content-type');
-    if (!contentType || !contentType.includes('text/html')) {
-        console.error(`Got non-HTML response: ${contentType}`);
-        return;
-    }
-
-    return await res.text()
+    return data;
 }
 
 export function getH1FromHTML(html: string): string {

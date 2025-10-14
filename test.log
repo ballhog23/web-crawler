@@ -1,29 +1,105 @@
 
 > web-crawler@1.0.0 start
-> tsx ./src/index.ts https://firstchoiceautotx.com
+> tsx ./src/index.ts https://wagslane.dev/
 
-starting crawl of: https://firstchoiceautotx.com...
-crawling page... https://firstchoiceautotx.com
+starting crawl of: https://wagslane.dev/...
+crawling page... wagslane.dev
 extracted page data successfully...
-crawling page... https://firstchoiceautotx.com/index.html
+crawling page... wagslane.dev/tags
+crawling page... wagslane.dev/about
+crawling page... wagslane.dev/index.xml
+crawling page... wagslane.dev/posts/zen-of-proverbs
+crawling page... wagslane.dev/posts/college-a-solution-in-search-of-a-problem
+crawling page... wagslane.dev/posts/guard-keyword-error-handling-golang
+crawling page... wagslane.dev/posts/no-one-does-devops
+crawling page... wagslane.dev/posts/developers-learn-to-say-no
+crawling page... wagslane.dev/posts/dark-patterns
+crawling page... wagslane.dev/posts/func-y-json-api
+crawling page... wagslane.dev/posts/seo-is-a-scam-job
+crawling page... wagslane.dev/posts/things-i-dont-want-to-do-to-grow-business
+crawling page... wagslane.dev/posts/what-a-crazy-religion
+crawling page... wagslane.dev/posts/collapsing-quality-of-devto
+crawling page... wagslane.dev/posts/keep-your-data-raw-at-rest
+crawling page... wagslane.dev/posts/continuous-deployments-arent-continuous-disruptions
+crawling page... wagslane.dev/posts/kanban-vs-scrum
+crawling page... wagslane.dev/posts/gos-major-version-handling
+crawling page... wagslane.dev/posts/optimize-for-simplicit-first
+crawling page... wagslane.dev/posts/go-struct-ordering
+crawling page... wagslane.dev/posts/managers-that-cant-code
+crawling page... wagslane.dev/posts/leave-scrum-to-rugby
+crawling page... wagslane.dev/posts/a-case-against-a-case-for-the-book-of-mormon
 extracted page data successfully...
-crawling page... https://firstchoiceautotx.com/services/index.html
+crawling page... wagslane.dev/tags/business
+crawling page... wagslane.dev/tags/clean-code
+crawling page... wagslane.dev/tags/devops
+crawling page... wagslane.dev/tags/education
+crawling page... wagslane.dev/tags/golang
+crawling page... wagslane.dev/tags/management
+crawling page... wagslane.dev/tags/philosophy
+crawling page... wagslane.dev/tags/writing
 extracted page data successfully...
-crawling page... https://firstchoiceautotx.com/about-us/index.html
-extracted page data successfully...
-crawling page... https://firstchoiceautotx.com/gallery/index.html
-extracted page data successfully...
-crawling page... https://firstchoiceautotx.com/sitemap.xml
 Got non-HTML response: application/xml
 html is empty
-crawling page... https://firstchoiceautotx.com/faq.html
 extracted page data successfully...
-Map(7) {
-  'firstchoiceautotx.com' => 1,
-  'firstchoiceautotx.com/index.html' => 24,
-  'firstchoiceautotx.com/services/index.html' => 15,
-  'firstchoiceautotx.com/about-us/index.html' => 12,
-  'firstchoiceautotx.com/gallery/index.html' => 6,
-  'firstchoiceautotx.com/sitemap.xml' => 6,
-  'firstchoiceautotx.com/faq.html' => 6
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+extracted page data successfully...
+crawl_total: 1.529s
+Map(32) {
+  'wagslane.dev' => 63,
+  'wagslane.dev/tags' => 62,
+  'wagslane.dev/about' => 62,
+  'wagslane.dev/index.xml' => 62,
+  'wagslane.dev/posts/zen-of-proverbs' => 2,
+  'wagslane.dev/posts/college-a-solution-in-search-of-a-problem' => 2,
+  'wagslane.dev/posts/guard-keyword-error-handling-golang' => 2,
+  'wagslane.dev/posts/no-one-does-devops' => 2,
+  'wagslane.dev/posts/developers-learn-to-say-no' => 1,
+  'wagslane.dev/posts/dark-patterns' => 2,
+  'wagslane.dev/posts/func-y-json-api' => 2,
+  'wagslane.dev/posts/seo-is-a-scam-job' => 2,
+  'wagslane.dev/posts/things-i-dont-want-to-do-to-grow-business' => 2,
+  'wagslane.dev/posts/what-a-crazy-religion' => 2,
+  'wagslane.dev/posts/collapsing-quality-of-devto' => 2,
+  'wagslane.dev/posts/keep-your-data-raw-at-rest' => 2,
+  'wagslane.dev/posts/continuous-deployments-arent-continuous-disruptions' => 3,
+  'wagslane.dev/posts/kanban-vs-scrum' => 4,
+  'wagslane.dev/posts/gos-major-version-handling' => 2,
+  'wagslane.dev/posts/optimize-for-simplicit-first' => 2,
+  'wagslane.dev/posts/go-struct-ordering' => 2,
+  'wagslane.dev/posts/managers-that-cant-code' => 4,
+  'wagslane.dev/posts/leave-scrum-to-rugby' => 5,
+  'wagslane.dev/posts/a-case-against-a-case-for-the-book-of-mormon' => 2,
+  'wagslane.dev/tags/business' => 1,
+  'wagslane.dev/tags/clean-code' => 1,
+  'wagslane.dev/tags/devops' => 1,
+  'wagslane.dev/tags/education' => 1,
+  'wagslane.dev/tags/golang' => 1,
+  'wagslane.dev/tags/management' => 1,
+  'wagslane.dev/tags/philosophy' => 1,
+  'wagslane.dev/tags/writing' => 1
 }
