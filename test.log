@@ -1,0 +1,31 @@
+
+> web-crawler@1.0.0 start
+> tsx ./src/index.ts https://calebpirkle.com/
+
+starting crawl of: https://calebpirkle.com/...
+crawling page... https://calebpirkle.com/
+extracted page data successfully...
+crawling page... https://calebpirkle.com/services/
+extracted page data successfully...
+crawling page... https://calebpirkle.com/contact/
+extracted page data successfully...
+crawling page... https://calebpirkle.com/frequently-asked-questions.html
+Got HTTP error: 404 Not Found https://calebpirkle.com/frequently-asked-questions.html
+extracted page data successfully...
+crawling page... https://calebpirkle.com/services/services/
+Got HTTP error: 404 Not Found https://calebpirkle.com/services/services/
+extracted page data successfully...
+crawling page... https://calebpirkle.com/checkout/
+extracted page data successfully...
+crawling page... https://calebpirkle.com/faq/
+Got HTTP error: 404 Not Found https://calebpirkle.com/faq/
+extracted page data successfully...
+Map(7) {
+  'calebpirkle.com' => 18,
+  'calebpirkle.com/services' => 11,
+  'calebpirkle.com/contact' => 13,
+  'calebpirkle.com/frequently-asked-questions.html' => 1,
+  'calebpirkle.com/services/services' => 1,
+  'calebpirkle.com/checkout' => 4,
+  'calebpirkle.com/faq' => 3
+}

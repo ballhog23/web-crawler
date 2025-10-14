@@ -17,6 +17,42 @@ export function normalizeURL(urlString: string) {
     return fullpath;
 }
 
+export async function crawlPage(baseURL: string, currentURL: string, pages: Map<string, number> = new Map()) {
+    const currentURLHost = new URL(currentURL).hostname;
+    const baseURLHost = new URL(baseURL).hostname;
+
+    if (currentURLHost !== baseURLHost) return pages;
+
+    const normalCurURL = normalizeURL(currentURL);
+    const value = pages.get(normalCurURL) ?? 1;
+
+    if (pages.has(normalCurURL)) {
+        pages.set(normalCurURL, (value + 1));
+        return pages;
+    }
+
+    console.log(`crawling page... ${currentURL}`);
+    pages.set(normalCurURL, value);
+
+
+    const html = await getHTML(currentURL);
+    if (!html) {
+        console.error(`Error fetching HTML from URL: ${currentURL}`);
+        return pages;
+    }
+
+    const pageData = extractPageData(html, currentURL);
+    const links = pageData.outgoing_links;
+
+    if (links.length === 0) return pages;
+
+    for (const link of links) {
+        await crawlPage(baseURL, link, pages)
+    }
+
+    return pages;
+}
+
 export async function getHTML(url: string) {
     const options: RequestInit = {
         method: "GET",
@@ -34,17 +70,17 @@ export async function getHTML(url: string) {
     }
 
     if (res.status > 399) {
-        console.log(`Got HTTP error: ${res.status} ${res.statusText}`);
+        console.log(`Got HTTP error: ${res.status} ${res.statusText}`, url);
         return;
     }
 
     const contentType = res.headers.get('content-type');
     if (!contentType || !contentType.includes('text/html')) {
         console.error(`Got non-HTML response: ${contentType}`);
-        return
+        return;
     }
 
-    console.log(await res.text());
+    return await res.text();
 }
 
 export function getH1FromHTML(html: string): string {
@@ -98,6 +134,7 @@ export function getURLsFromHTML(html: string, baseURL: string): string[] {
     } catch (err) {
         console.error("failed to parse HTML:", err);
     }
+
     return urls;
 }
 
@@ -115,9 +152,9 @@ export function getImagesFromHTML(html: string, baseURL: string): string[] {
 
             try {
                 const url = new URL(src, baseURL).toString();
-                console.log(url)
                 srcs.push(url);
             } catch (err) {
+                console.error(`${err instanceof Error ? err.message : err}`)
                 console.error(`invalid src '${src}':`, err);
             }
         });
@@ -129,6 +166,7 @@ export function getImagesFromHTML(html: string, baseURL: string): string[] {
 }
 
 export function extractPageData(html: string, pageURL: string): ExtractedPageData {
+    console.log(`extracted page data successfully...`);
     return {
         url: pageURL,
         h1: getH1FromHTML(html),
