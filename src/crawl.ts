@@ -18,8 +18,8 @@ export function normalizeURL(urlString: string) {
     return fullpath;
 }
 
-export async function crawlSiteAsync(baseURL: string) {
-    const cc = new ConcurrentCrawler(baseURL, new Map());
+export async function crawlSiteAsync(baseURL: string, maxConcurreny: number, maxPages: number) {
+    const cc = new ConcurrentCrawler(baseURL, maxConcurreny, maxPages);
     const data = await cc.crawl(baseURL);
 
     return data;
@@ -108,7 +108,7 @@ export function getImagesFromHTML(html: string, baseURL: string): string[] {
 }
 
 export function extractPageData(html: string, pageURL: string): ExtractedPageData {
-    console.log(`extracted page data successfully...`);
+    console.log(`extracting page data for URL: `, pageURL);
     return {
         url: pageURL,
         h1: getH1FromHTML(html),

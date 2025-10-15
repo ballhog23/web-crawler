@@ -2,66 +2,45 @@ import pLimit from "p-limit";
 import { extractPageData, normalizeURL } from "../crawl";
 
 export class ConcurrentCrawler {
-    baseURL: string;
-    pages: Pages;
-    limit: ReturnType<typeof pLimit>
+    private baseURL: string;
+    private pages: Pages;
+    private limit: ReturnType<typeof pLimit>;
+    private maxPages: number;
+    private shouldStop: boolean = false;
+    private allTasks = new Set<Promise<void>>();
+    private abortController = new AbortController();
+    private visited = new Set<string>();
 
     constructor(
         baseURL: string,
-        pages: Pages,
-        limit: ReturnType<typeof pLimit> = pLimit(10),
+        maxConcurreny: number = 5,
+        maxPages: number = 1000
     ) {
         this.baseURL = baseURL;
-        this.pages = pages;
-        this.limit = limit;
+        this.pages = new Map();
+        this.limit = pLimit(maxConcurreny);
+        this.maxPages = Math.max(1, maxPages);
     }
 
-    private addPageVisit(normalizedURL: string): boolean {
-        const value = this.pages.get(normalizedURL) ?? 1;
+    async crawl(baseURL: string): Promise<Pages> {
+        console.time("crawl_total");
 
-        if (this.pages.has(normalizedURL)) {
-            this.pages.set(normalizedURL, (value + 1));
-            return false;
+        const rootTask = this.crawlPage(baseURL);
+        this.allTasks.add(rootTask);
+        try {
+            await rootTask;
+        } finally {
+            this.allTasks.delete(rootTask);
         }
+        await Promise.allSettled(Array.from(this.allTasks));
 
-        console.log(`crawling page... ${normalizedURL}`);
-        this.pages.set(normalizedURL, value);
-        return true;
-    }
-
-    private async getHTML(currentURL: string): Promise<string> {
-        return await this.limit(async () => {
-            const options: RequestInit = {
-                method: "GET",
-                headers: {
-                    "User-Agent": 'BootCrawler/1.0',
-                }
-            }
-
-            let res: Response;
-            try {
-                res = await fetch(currentURL, options);
-            } catch (error) {
-                throw new Error(`Network Error: ${error instanceof Error ? error.message : error}`);
-            }
-
-            if (res.status > 399) {
-                console.log(`Got HTTP error: ${res.status} ${res.statusText}`, currentURL);
-                return '';
-            }
-
-            const contentType = res.headers.get('content-type');
-            if (!contentType || !contentType.includes('text/html')) {
-                console.error(`Got non-HTML response: ${contentType}`);
-                return '';
-            }
-
-            const body = await res.text();
-            return body;
-        });
+        console.timeEnd("crawl_total");
+        return this.pages;
     }
 
     private async crawlPage(currentURL: string): Promise<void> {
+        if (this.shouldStop) return;
+
         const currentURLHost = new URL(currentURL).hostname;
         const baseURLHost = new URL(this.baseURL).hostname;
 
@@ -80,6 +59,8 @@ export class ConcurrentCrawler {
             return;
         }
 
+        if (this.shouldStop) return;
+
         if (!html) {
             console.log('html is empty');
             return;
@@ -87,17 +68,80 @@ export class ConcurrentCrawler {
 
         const pageData = extractPageData(html, currentURL);
         const links = pageData.outgoing_links;
-        const internalLinks = links.map(async link => await this.crawlPage(link));
+        const crawlPromises: Promise<void>[] = [];
 
+        for (const link of links) {
+            if (this.shouldStop) break;
 
-        await Promise.all(internalLinks);
+            const crawlPromise = this.crawlPage(link);
+            this.allTasks.add(crawlPromise);
+            crawlPromise.finally(() => this.allTasks.delete(crawlPromise));
+            crawlPromises.push(crawlPromise)
+        }
+
+        await Promise.all(crawlPromises);
     }
 
-    async crawl(baseURL: string) {
-        console.time("crawl_total");
-        await this.crawlPage(baseURL);
-        console.timeEnd("crawl_total");
-        return this.pages;
+    private async getHTML(currentURL: string): Promise<string> {
+        console.log('fetching HTML for: ', currentURL);
+        return await this.limit(async () => {
+            const options: RequestInit = {
+                method: "GET",
+                headers: {
+                    "User-Agent": 'BootCrawler/1.0',
+                },
+                signal: this.abortController.signal
+            }
+
+            let res: Response;
+            try {
+                res = await fetch(currentURL, options);
+            } catch (error) {
+                if (error instanceof Error && error.name === 'AbortError') {
+                    throw new Error(`Aborting in-flight request`);
+                } else {
+                    throw new Error(`Network Error: ${error instanceof Error ? error.message : error}`);
+                }
+            }
+
+            if (res.status > 399) {
+                console.log(`Got HTTP error: ${res.status} ${res.statusText}`, currentURL);
+                return '';
+            }
+
+            const contentType = res.headers.get('content-type');
+            if (!contentType || !contentType.includes('text/html')) {
+                console.error(`Got non-HTML response: ${contentType}`);
+                return '';
+            }
+
+            const body = await res.text();
+            return body;
+        });
+    }
+
+    private addPageVisit(normalizedURL: string): boolean {
+        if (this.shouldStop) return false;
+
+        const count = this.pages.get(normalizedURL) ?? 1;
+        if (this.pages.has(normalizedURL)) {
+            this.pages.set(normalizedURL, (count + 1));
+            return false;
+        }
+
+        this.visited.add(normalizedURL);
+        console.log('VISITED SIZE: ', this.visited.size)
+
+        if (this.visited.size >= this.maxPages) {
+            this.shouldStop = true;
+            console.log("Reached maximum number of pages to crawl.");
+            this.abortController.abort();
+            return false;
+        }
+
+        this.pages.set(normalizedURL, count);
+        console.log(`crawling page... ${normalizedURL}`);
+        return true;
     }
 }
 
