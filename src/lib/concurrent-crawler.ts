@@ -1,4 +1,5 @@
 import pLimit from "p-limit";
+import type { ExtractedPageData } from "../crawl";
 import { extractPageData, normalizeURL } from "../crawl";
 
 export class ConcurrentCrawler {
@@ -10,6 +11,7 @@ export class ConcurrentCrawler {
     private allTasks = new Set<Promise<void>>();
     private abortController = new AbortController();
     private visited = new Set<string>();
+    private crawledPageData: PageData;
 
     constructor(
         baseURL: string,
@@ -20,21 +22,22 @@ export class ConcurrentCrawler {
         this.pages = new Map();
         this.limit = pLimit(maxConcurreny);
         this.maxPages = Math.max(1, maxPages);
+        this.crawledPageData = new Map();
     }
 
     async crawl(baseURL: string): Promise<Pages> {
-        console.time("crawl_total");
-
         const rootTask = this.crawlPage(baseURL);
         this.allTasks.add(rootTask);
+
         try {
             await rootTask;
         } finally {
             this.allTasks.delete(rootTask);
         }
+
         await Promise.allSettled(Array.from(this.allTasks));
 
-        console.timeEnd("crawl_total");
+
         return this.pages;
     }
 
@@ -61,10 +64,7 @@ export class ConcurrentCrawler {
 
         if (this.shouldStop) return;
 
-        if (!html) {
-            console.log('html is empty');
-            return;
-        }
+        if (!html) return;
 
         const pageData = extractPageData(html, currentURL);
         const links = pageData.outgoing_links;
@@ -79,11 +79,13 @@ export class ConcurrentCrawler {
             crawlPromises.push(crawlPromise)
         }
 
+        this.crawledPageData.set(normalizedURL, pageData);
+
         await Promise.all(crawlPromises);
     }
 
     private async getHTML(currentURL: string): Promise<string> {
-        console.log('fetching HTML for: ', currentURL);
+        // console.log('fetching HTML for: ', currentURL);
         return await this.limit(async () => {
             const options: RequestInit = {
                 method: "GET",
@@ -105,7 +107,7 @@ export class ConcurrentCrawler {
             }
 
             if (res.status > 399) {
-                console.log(`Got HTTP error: ${res.status} ${res.statusText}`, currentURL);
+                // console.error(`Got HTTP error: ${res.status} ${res.statusText}`, currentURL);
                 return '';
             }
 
@@ -120,6 +122,10 @@ export class ConcurrentCrawler {
         });
     }
 
+    extractedPageData(): PageData {
+        return this.crawledPageData;
+    }
+
     private addPageVisit(normalizedURL: string): boolean {
         if (this.shouldStop) return false;
 
@@ -130,19 +136,20 @@ export class ConcurrentCrawler {
         }
 
         this.visited.add(normalizedURL);
-        console.log('VISITED SIZE: ', this.visited.size)
 
         if (this.visited.size >= this.maxPages) {
             this.shouldStop = true;
-            console.log("Reached maximum number of pages to crawl.");
+            // console.log("Reached maximum number of pages to crawl.");
             this.abortController.abort();
             return false;
         }
 
         this.pages.set(normalizedURL, count);
-        console.log(`crawling page... ${normalizedURL}`);
+        // console.log(`crawling page... ${normalizedURL}`);
         return true;
     }
 }
 
 export type Pages = Map<string, number>;
+
+export type PageData = Map<string, ExtractedPageData>;

@@ -1,4 +1,5 @@
 import { crawlSiteAsync } from './crawl';
+import { writeCSVReport } from './report';
 
 async function main() {
     const args = process.argv.slice(2);
@@ -20,12 +21,24 @@ async function main() {
         process.exit(1);
     }
 
-    console.log(`starting crawl of: ${baseURL}...`);
+    try {
+        console.log(`starting crawl of: ${baseURL}...`);
 
-    const pages = await crawlSiteAsync(baseURL, maxConcurrency, maxPages);
-    console.log(pages);
+        const pages = await crawlSiteAsync(baseURL, maxConcurrency, maxPages);
 
-    process.exit(0);
+        if (!pages) {
+            console.log('error extracting data');
+            return;
+        }
+
+        const crawledPagesData = pages[1];
+        writeCSVReport(crawledPagesData);
+
+        process.exit(0);
+    } catch (error) {
+        console.log(`${error instanceof Error ? error.message : error}`);
+        process.exit(1);
+    }
 }
 
 main();

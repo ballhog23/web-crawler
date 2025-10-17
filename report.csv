@@ -1,13 +1,3 @@
-
-> web-crawler@1.0.0 start
-> tsx ./src/index.ts https://calebpirkle.com/ 10 20
-
-starting crawl of: https://calebpirkle.com/...
-extracting page data for URL:  https://calebpirkle.com/
-extracting page data for URL:  https://calebpirkle.com/contact/
-extracting page data for URL:  https://calebpirkle.com/services/
-extracting page data for URL:  https://calebpirkle.com/checkout/
-writing CSV...
 page_url,h1,first_paragraph,outgoing_link_urls,image_urls
 https://calebpirkle.com/,Vino,Custom-crafted drinks tailored to your event.,https://calebpirkle.com/;https://calebpirkle.com/;https://calebpirkle.com/services/;https://calebpirkle.com/contact/;https://calebpirkle.com/;https://calebpirkle.com/services/;https://calebpirkle.com/contact/;https://m.facebook.com/people/Cocktails-By-VINO/61565423757306/;https://m.facebook.com/people/Cocktails-By-VINO/61565423757306/;https://calebpirkle.com/services/;https://calebpirkle.com/services/;https://calebpirkle.com/services/;https://calebpirkle.com/;https://calebpirkle.com/faq/;https://calebpirkle.com/#;https://calebpirkle.com/contact/;https://m.facebook.com/people/Cocktails-By-VINO/61565423757306/;https://m.facebook.com/people/Cocktails-By-VINO/61565423757306/,https://calebpirkle.com/images/svg/logo.svg;https://calebpirkle.com/images/svg/wine-bottle.svg;https://calebpirkle.com/images/svg/arrow-down.svg;https://calebpirkle.com/images/svg/cocktail.svg;https://calebpirkle.com/images/svg/truck.svg;https://calebpirkle.com/images/svg/events.svg;https://picsum.photos/500;https://calebpirkle.com/images/svg/logo.svg
 https://calebpirkle.com/contact/,Contact Vino,Give me a shout,https://calebpirkle.com/;https://calebpirkle.com/;https://calebpirkle.com/services/;https://calebpirkle.com/contact/;https://calebpirkle.com/;https://calebpirkle.com/services/;https://calebpirkle.com/contact/;https://m.facebook.com/people/Cocktails-By-VINO/61565423757306/;https://m.facebook.com/people/Cocktails-By-VINO/61565423757306/;https://calebpirkle.com/;https://calebpirkle.com/frequently-asked-questions.html;https://calebpirkle.com/contact/#;https://calebpirkle.com/contact/;https://m.facebook.com/people/Cocktails-By-VINO/61565423757306/;https://m.facebook.com/people/Cocktails-By-VINO/61565423757306/,https://calebpirkle.com/images/svg/logo.svg;https://calebpirkle.com/images/svg/wine-bottle.svg;https://calebpirkle.com/images/svg/logo.svg

@@ -1,6 +1,6 @@
 import { URL } from "node:url";
 import { JSDOM } from 'jsdom';
-import { ConcurrentCrawler } from './lib/concurrent-crawler';
+import { ConcurrentCrawler, Pages, PageData } from './lib/concurrent-crawler';
 
 export function normalizeURL(urlString: string) {
     if (urlString.length === 0) {
@@ -18,11 +18,12 @@ export function normalizeURL(urlString: string) {
     return fullpath;
 }
 
-export async function crawlSiteAsync(baseURL: string, maxConcurreny: number, maxPages: number) {
+export async function crawlSiteAsync(baseURL: string, maxConcurreny: number, maxPages: number): Promise<AllSiteData> {
     const cc = new ConcurrentCrawler(baseURL, maxConcurreny, maxPages);
-    const data = await cc.crawl(baseURL);
+    const pagesCrawled = await cc.crawl(baseURL);
+    const pagesCrawledData = cc.extractedPageData();
 
-    return data;
+    return [pagesCrawled, pagesCrawledData];
 }
 
 export function getH1FromHTML(html: string): string {
@@ -125,3 +126,5 @@ export type ExtractedPageData = {
     outgoing_links: string[],
     image_urls: string[],
 }
+
+export type AllSiteData = [Pages, PageData]
